@@ -24,6 +24,8 @@ void chat::on_deleteButton_clicked()
 void chat::on_sendButton_clicked()
 {
     QByteArray ba;
-    ba.append(ui->nameLine->text() + ": " + ui->sendLine->text());
+    QDateTime dateTime= QDateTime::currentDateTime();//获取系统当前的时间
+    QString timeStr = dateTime.toString("yyyy-MM-dd hh:mm:ss");//格式化时间
+    ba.append(timeStr + "  " + ui->nameLine->text() + ": " + ui->sendLine->text());
     socket->write(ba);        //write()需要提供bytearray型的参数，所以要把qstring转换一下
 }

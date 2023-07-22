@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QTcpSocket>
+#include <QDateTime>
 
 namespace Ui {
 class chat;

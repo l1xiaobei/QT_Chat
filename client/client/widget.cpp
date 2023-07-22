@@ -27,7 +27,9 @@ void Widget::on_loginButton_clicked()
 
        //向服务器打印一条加入信息
        QByteArray ba;
-       ba.append("[" + name + "] " + "has joined the terrorist force");
+       QDateTime dateTime= QDateTime::currentDateTime();//获取系统当前的时间
+       QString timeStr = dateTime.toString("yyyy-MM-dd hh:mm:ss");//格式化时间
+       ba.append(timeStr + "  " + "[" + name + "] " + "has joined the terrorist force");
        socket->write(ba);
 
        this->hide();
