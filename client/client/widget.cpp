@@ -24,6 +24,12 @@ void Widget::on_loginButton_clicked()
 
     connect(socket, &QTcpSocket::connected, [this,name](){
        QMessageBox::information(this, "连接状态", "连接成功");
+
+       //向服务器打印一条加入信息
+       QByteArray ba;
+       ba.append("[" + name + "] " + "has joined the terrorist force");
+       socket->write(ba);
+
        this->hide();
 
        chat *c = new chat(socket, name);      //在堆空间里面创建chat对象防止被杀掉
