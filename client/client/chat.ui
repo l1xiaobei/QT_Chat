@@ -16,10 +16,10 @@
   <widget class="QLineEdit" name="sendLine">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>40</y>
-     <width>451</width>
-     <height>271</height>
+     <x>20</x>
+     <y>250</y>
+     <width>441</width>
+     <height>61</height>
     </rect>
    </property>
   </widget>
@@ -70,6 +70,16 @@
    </property>
    <property name="text">
     <string>当前聊天室马甲：</string>
+   </property>
+  </widget>
+  <widget class="QTextEdit" name="chatText">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>40</y>
+     <width>441</width>
+     <height>191</height>
+    </rect>
    </property>
   </widget>
  </widget>

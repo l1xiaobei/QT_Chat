@@ -14,4 +14,7 @@ void thread::run_slots()
 {
     QByteArray ba = socket->readAll();
     emit send2Widget(ba);   //发送信号
+
+    //向客户端发送回去消息
+    socket->write(ba);
 }

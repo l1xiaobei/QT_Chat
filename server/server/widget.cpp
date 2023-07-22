@@ -7,7 +7,7 @@ Widget::Widget(QWidget *parent)
 {
     ui->setupUi(this);
     server = new QTcpServer;
-    server->listen(QHostAddress::AnyIPv4, PORT);    //创建服务器对象并监听来自给定端口号（这里是8080），任意IPv4地址的客户端连接请求
+    server->listen(QHostAddress::AnyIPv4, PORT);    //创建服务器对象并监听来自给定端口号（这里是8000），任意IPv4地址的客户端连接请求
     connect(server, &QTcpServer::newConnection, this, &Widget::connect_slot);   //建立newConnection信号与connect_slot槽函数之间的连接
 }
 

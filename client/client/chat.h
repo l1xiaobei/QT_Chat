@@ -22,6 +22,8 @@ private slots:
 
     void on_sendButton_clicked();
 
+    void server_slot();
+
 private:
     Ui::chat *ui;
     QTcpSocket *socket;
