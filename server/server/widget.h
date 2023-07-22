@@ -30,5 +30,7 @@ private slots:
 private:
     Ui::Widget *ui;
     QTcpServer *server;
+
+    QList <QTcpSocket*> clientList; //连接到服务器的客户端列表
 };
 #endif // WIDGET_H

@@ -20,6 +20,8 @@ void Widget::connect_slot()
 {
     QTcpSocket *socket = server->nextPendingConnection();
 
+    clientList.append(socket);  //将连接到的客户端套接字存起来
+
     ui->ipLine->setText(socket->peerAddress().toString());          //获取客户端的ip，并显示
     ui->portLine->setText(QString::number(socket->peerPort()));     //获取客户端的端口号（不等于服务器的端口），并显示
 
@@ -32,6 +34,13 @@ void Widget::connect_slot()
 void Widget::send_slot(QByteArray ba)
 {
     ui->textEdit->append(QString(ba));
+
+    //向每一个客户端转发服务器收到的消息
+    for(int i=0; i<clientList.count(); i++)
+    {
+        clientList.at(i)->write(ba);
+    }
+
 }
 
 void Widget::on_closeButton_clicked()
