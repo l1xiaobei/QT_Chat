@@ -13,7 +13,7 @@ class chat : public QWidget
     Q_OBJECT
 
 public:
-    explicit chat(QTcpSocket *s, QWidget *parent = nullptr);
+    explicit chat(QTcpSocket *s, QString name, QWidget *parent = nullptr);
     ~chat();
 
 private slots:
