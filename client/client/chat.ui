@@ -6,95 +6,57 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>479</width>
-    <height>376</height>
+    <width>710</width>
+    <height>510</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QLineEdit" name="sendLine">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>260</y>
-     <width>441</width>
-     <height>61</height>
-    </rect>
+  <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,0,0">
+   <property name="sizeConstraint">
+    <enum>QLayout::SetDefaultConstraint</enum>
    </property>
-  </widget>
-  <widget class="QPushButton" name="sendButton">
-   <property name="geometry">
-    <rect>
-     <x>90</x>
-     <y>340</y>
-     <width>93</width>
-     <height>28</height>
-    </rect>
+   <property name="leftMargin">
+    <number>9</number>
    </property>
-   <property name="text">
-    <string>Send</string>
+   <property name="rightMargin">
+    <number>9</number>
    </property>
-  </widget>
-  <widget class="QPushButton" name="deleteButton">
-   <property name="geometry">
-    <rect>
-     <x>290</x>
-     <y>340</y>
-     <width>93</width>
-     <height>28</height>
-    </rect>
+   <property name="horizontalSpacing">
+    <number>5</number>
    </property>
-   <property name="text">
-    <string>Delete</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="nameLine">
-   <property name="geometry">
-    <rect>
-     <x>140</x>
-     <y>6</y>
-     <width>121</width>
-     <height>21</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLabel" name="nameLabel">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>10</y>
-     <width>121</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>当前聊天室马甲：</string>
-   </property>
-  </widget>
-  <widget class="QTextEdit" name="chatText">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>40</y>
-     <width>441</width>
-     <height>191</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="imageButton">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>230</y>
-     <width>51</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>图片</string>
-   </property>
-  </widget>
+   <item row="1" column="0" colspan="3">
+    <widget class="QTextEdit" name="chatText"/>
+   </item>
+   <item row="0" column="0" colspan="2">
+    <widget class="QLabel" name="nameLabel">
+     <property name="text">
+      <string>当前聊天室马甲：</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="3">
+    <widget class="QLineEdit" name="sendLine"/>
+   </item>
+   <item row="2" column="0">
+    <widget class="QPushButton" name="imageButton">
+     <property name="text">
+      <string>图片</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QLineEdit" name="nameLine"/>
+   </item>
+   <item row="2" column="1">
+    <widget class="QPushButton" name="sendButton">
+     <property name="text">
+      <string>Send</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>
