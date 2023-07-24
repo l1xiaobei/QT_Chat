@@ -29,7 +29,7 @@ void Widget::on_loginButton_clicked()
        QByteArray ba;
        QDateTime dateTime= QDateTime::currentDateTime();//获取系统当前的时间
        QString timeStr = dateTime.toString("yyyy-MM-dd hh:mm:ss");//格式化时间
-       ba.append(timeStr + "  " + "[" + name + "] " + "has joined the terrorist force");
+       ba.append("[" + name + "] " + "has joined the terrorist force");
        socket->write(ba);
 
        this->hide();

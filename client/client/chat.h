@@ -4,6 +4,9 @@
 #include <QWidget>
 #include <QTcpSocket>
 #include <QDateTime>
+#include <QFileDialog>
+#include <QBuffer>
+#include <QDebug>
 
 namespace Ui {
 class chat;
@@ -23,6 +26,8 @@ private slots:
     void on_sendButton_clicked();
 
     void server_slot();
+
+    void on_imageButton_clicked();
 
 private:
     Ui::chat *ui;
