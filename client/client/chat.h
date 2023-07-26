@@ -7,6 +7,7 @@
 #include <QFileDialog>
 #include <QBuffer>
 #include <QDebug>
+#include <QImage>
 
 namespace Ui {
 class chat;
