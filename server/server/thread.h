@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QThread>
 #include <QTcpSocket>
+#include <QImage>
 
 class thread : public QThread
 {

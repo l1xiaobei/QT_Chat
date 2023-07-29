@@ -1,6 +1,13 @@
 #include "widget.h"
 #include "ui_widget.h"
 
+//定义一个枚举消息类型用于区分发送的是图片还是消息
+enum MsgType
+{
+    textMsg,
+    imageMsg,
+};
+
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
@@ -33,12 +40,27 @@ void Widget::connect_slot()
 
 void Widget::send_slot(QByteArray ba)
 {
-    ui->textEdit->append(QString(ba));
+//        ui->textEdit->append(QString(ba));
 
-    //向每一个客户端转发服务器收到的消息
-    for(int i=0; i<clientList.count(); i++)
+//        //向每一个客户端转发服务器收到的消息
+//        for(int i=0; i<clientList.count(); i++)
+//        {
+//            clientList.at(i)->write(ba);
+//        }
+    QDataStream in(&ba, QIODevice::ReadOnly);
+    in.setVersion(QDataStream::Qt_5_12);       //设置QDataStream版本
+    int typeMsg;
+    QString msgInfo;
+    QByteArray msgData;
+    in>>typeMsg>>msgInfo>>msgData;
+    QString msgData_ = msgData.toBase64();
+    qDebug() << "接收到的数据大小：" << msgData.size();
+    qDebug() << "消息信息：" << msgInfo;
+    if(typeMsg == MsgType::imageMsg)
     {
-        clientList.at(i)->write(ba);
+        ui->textEdit->append(msgInfo);
+        QString htmlPath = "<img src=\"data:image/png;base64," + msgData_ + "width=\"220\" height=\"96\"" "\">";
+        ui->textEdit->insertHtml(htmlPath);
     }
 
 }
