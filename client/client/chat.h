@@ -8,6 +8,8 @@
 #include <QBuffer>
 #include <QDebug>
 #include <QImage>
+#include <QThread> //线程延时时用到
+#include <iomanip>  //设置小数显示位数时用到
 
 namespace Ui {
 class chat;

@@ -6,7 +6,7 @@ enum MsgType
 {
     textMsg,
     imageMsg,
-}; 
+};
 
 chat::chat(QTcpSocket *s,QString name, QWidget *parent) :
     QWidget(parent),
@@ -54,46 +54,43 @@ void chat::on_imageButton_clicked()
     if(fileName.isEmpty()!=true)//得先确保选择图片了
     {
         QImage image(fileName); //创建图片对象
-        image.scaled(220, 96, Qt::KeepAspectRatio,Qt::FastTransformation);  //缩放图片，但是保持图像纵横比
         QByteArray imgBy;
-        QBuffer imgBuf(&imgBy); //将图片数据写入到imgBy字节数组中
-        image.save(&imgBuf, "png");
-
-        //-------------------------
-        //直接在本地显示图片
-//        QByteArray ba;
-//        QDateTime dateTime= QDateTime::currentDateTime();//获取系统当前的时间
-//        QString timeStr = dateTime.toString("yyyy-MM-dd hh:mm:ss");//格式化时间
-//        ba.append(timeStr + "  " + ui->nameLine->text() + ": " + "\n");   //!还没有发送给服务器哦!
-//        QString htmlPath = QString("<img src=\"%1\" weight=\"220\" height=\"96\" />").arg(fileName); //resize图片大小
-//        ui->chatText->append(ba);                                                                                         //   \ 用于转义 "
-//        ui->chatText->insertHtml(htmlPath);
-        //-------------------------
-
-        //将图片转换为 base64 格式，并构造富文本标签显示图片
-//        QString base64Image = imgBy.toBase64();
-//        QString htmlPath = "<img src=\"data:image/png;base64," + base64Image + "width=\"220\" height=\"96\"" "\">";
-//        QByteArray ba;
-//        QDateTime dateTime= QDateTime::currentDateTime();//获取系统当前的时间//这个时间差不多是接收到的时间而不是发送的时间
-//        QString timeStr = dateTime.toString("yyyy-MM-dd hh:mm:ss");//格式化时间
-//        ba.append(timeStr + "  " + ui->nameLine->text() + ": " + "\n");
-//        ui->chatText->append(ba);                                                                                         //   \ 用于转义 "
-//        ui->chatText->insertHtml(htmlPath);
-//        socket->write(imgBy);
-
-        //好像不太对，再换种传送方式，利用QDataStream
+        QBuffer imgBuf(&imgBy);
+        image.save(&imgBuf, "png");//将图片数据写入到imgBy字节数组中
+        //利用QDataStream封装信息传送图片
         QByteArray infoBlock;
         QDataStream out(&infoBlock, QIODevice::WriteOnly);   //将out与infoBlock关联起来
-        out.setVersion(QDataStream::Qt_5_12);       //设置QDataStream版本
-
+        out.setVersion(QDataStream::Qt_5_14);       //设置QDataStream版本
         int typeMsg = MsgType::imageMsg;        //设置发送的消息类型是图片类型
-
         QDateTime dateTime= QDateTime::currentDateTime();//获取系统当前的时间//这个时间差不多是接收到的时间而不是发送的时间
         QString timeStr = dateTime.toString("yyyy-MM-dd hh:mm:ss");//格式化时间
+        /*本地显示*/
+        ui->chatText->append(timeStr + "  " + ui->nameLine->text() + ": " + "\n" + ui->sendLine->text());
+        QString imgBase64 = imgBy.toBase64();
+        qDebug()<<imgBase64 ;
+        QString htmlPath = "<img src=\"data:image/png;base64," + imgBase64 + "width=\"220\" height=\"96\"" "\">";
+        ui->chatText->insertHtml(htmlPath);
 
-//        QString base64Image = imgBy.toBase64();    //设置发送的图片信息
-
-        out<<typeMsg<<timeStr<<imgBy;     //将消息全部封装进infoBlock
-        socket->write(infoBlock);
+        /*发送实现*/
+        int totalSize = imgBy.size();
+        qDebug() << totalSize;
+        int sendSize = 0;
+        QByteArray userInfo;
+        userInfo.append(timeStr + "  " + ui->nameLine->text() + ": " + "\n" + ui->sendLine->text());//发送用户的信息
+        const int CHUNK_SIZE = 1024;    //每帧发送的字节大小
+        qDebug()<<userInfo;
+        QByteArray chunk;
+        int chunkSize, remainingSize;
+        while(sendSize < totalSize)
+        {
+            remainingSize = totalSize - sendSize;
+            chunkSize = qMin(remainingSize, CHUNK_SIZE); //每帧发送的字节大小,如果不够1024，剩多少发多少
+            chunk = imgBy.left(chunkSize);  //从原始数据中提取一个块
+            out<<typeMsg<<totalSize<<chunk.length()<<userInfo<<chunk;      //将消息全部封装进infoBlock
+            socket->write(infoBlock);            //发送块数据
+            sendSize += chunkSize;                           //更新已发送数据的大小
+            //qDebug() << sendSize << "--->" << double(100.0*sendSize/totalSize) << "%";
+        }
     }
 }
+

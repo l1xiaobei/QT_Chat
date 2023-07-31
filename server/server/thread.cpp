@@ -12,6 +12,7 @@ void thread::run()
 
 void thread::run_slots()
 {
-    QByteArray ba = socket->readAll();
-    emit send2Widget(ba);   //发送信号
+        QByteArray ba = socket->readAll();
+        QThread::usleep(3);                             ///////延时
+        emit send2Widget(ba);   //发送信号
 }

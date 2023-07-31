@@ -5,6 +5,7 @@
 #include <QThread>
 #include <QTcpSocket>
 #include <QImage>
+#include <QLabel>
 
 class thread : public QThread
 {
