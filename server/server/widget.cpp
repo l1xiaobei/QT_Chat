@@ -38,7 +38,8 @@ void Widget::connect_slot()
     connect(t, &thread::send2Widget, this, &Widget::send_slot);
 }
 
-void Widget::send_slot(QByteArray ba)
+//void Widget::send_slot(QByteArray ba)//不在这里传参了
+void Widget::send_slot(QTcpSocket *socket)
 {
 //        ui->textEdit->append(QString(ba));
 
@@ -110,40 +111,85 @@ void Widget::send_slot(QByteArray ba)
 //        }
 //    }
 //////////////////////////////////////////////////
-    QDataStream in(&ba, QIODevice::ReadOnly);
-    MsgType typeMsg;
-    int totalSize, chunkLength;
-    QByteArray userInfo;
-    QByteArray chunk;
-    QByteArray imageData;
-    in>>typeMsg>>totalSize>>chunkLength>>userInfo>>chunk;
-    if(typeMsg == MsgType::imageMsg)
-    {
-        imageData.append(chunk);
-        int receiveLength = chunkLength;
-        while(receiveLength<totalSize)
-        {
-            MsgType typeMsg_;
-            QByteArray userInfo_;
-            int chunkLength_, totalSize_;
-            QByteArray imageData_;
-            QByteArray chunk_;//其实这些没必要保持一直，可以加个后缀tmp
-            in>>typeMsg_>>totalSize_>>chunkLength_>>userInfo_>>chunk_;    // 等待足够的数据到达
-            receiveLength += chunkLength_;
-            imageData.append(chunk_);
-        }
-    ui->textEdit->append(userInfo);
-    qDebug() << userInfo;
-    QString imageBase64 = imageData.toBase64();
-    ui->textEdit->setText(imageBase64);
-    qDebug()<<imageBase64;
-    qDebug()<<receiveLength;
-    QImage base64ToImage(QString base64Str);//函数原型声明
-    QImage image = base64ToImage(imageBase64);
-    QPixmap pixmap = QPixmap::fromImage(image);
-    ui->label_2->setPixmap(pixmap);
-    imageData.clear();
-    }
+//    QDataStream in(&ba, QIODevice::ReadOnly);
+//    MsgType typeMsg;
+//    int totalSize, chunkLength, blockIndex=0,localIndex=1;
+//    QByteArray userInfo;
+//    QByteArray chunk;
+//    QByteArray imageData;
+//    in>>blockIndex>>typeMsg>>totalSize>>chunkLength>>userInfo>>chunk;
+//    if(typeMsg == MsgType::imageMsg)
+//    {
+//        qDebug()<<localIndex<<"|||"<<blockIndex<<chunkLength<<"total:"<<totalSize;
+//        blockIndex+=1;localIndex+=1;
+//        int receiveLength = chunkLength;
+//        imageData.append(chunk);
+////      while(receiveLength<totalSize&&typeMsg==MsgType::imageMsg)//也许并不需要循环
+//        {
+//                if(localIndex == blockIndex)
+//                {
+//                    MsgType typeMsg_;
+//                    QByteArray userInfo_;
+//                    int chunkLength_, totalSize_;
+//                    QByteArray imageData_;
+//                    QByteArray chunk_;//其实这些没必要保持一直，可以加个后缀tmp
+//                    in>>blockIndex>>typeMsg_>>totalSize_>>chunkLength_>>userInfo_>>chunk_;    // 等待足够的数据到达
+//                    receiveLength += chunkLength_;
+//                    imageData.append(chunk_);
+//                    qDebug()<<localIndex<<blockIndex<<chunkLength<<"total:"<<totalSize<<"recv:"<<receiveLength;
+//                    localIndex+=1;
+//                }
+//        }
+//        ui->textEdit->append(userInfo);
+//        //qDebug() << userInfo;
+//        QString imageBase64 = imageData.toBase64();
+//        ui->textEdit->setText(imageBase64);
+//    }
+//    //qDebug()<<imageBase64;
+////    qDebug()<<receiveLength;
+////    QImage base64ToImage(QString base64Str);//函数原型声明
+////    QImage image = base64ToImage(imageBase64);
+////    QPixmap pixmap = QPixmap::fromImage(image);
+////    ui->label_2->setPixmap(pixmap);
+////    imageData.clear();
+/////////////////////////////////////
+//    QDataStream in(&ba, QIODevice::ReadOnly);
+//    int blockIndex = 0, totalSize, chunkLength, recvLength = 0;
+//    MsgType typeMsg;
+//    QByteArray chunk, imageData, userInfo;
+//    int localIndex = 0;
+//    if (localIndex == blockIndex)
+//    {
+//        in>>blockIndex>>typeMsg>>totalSize>>chunkLength>>userInfo>>chunk;
+//        recvLength += chunkLength;
+//        imageData.append(chunk);
+//        localIndex += 1;
+//        qDebug()<<localIndex<<blockIndex<<chunkLength<<"total:"<<totalSize<<"recv:"<<recvLength;
+//    }
+//    QDataStream in(socket);
+//    int blockIndex, totalSize, chunkLength;
+//    int recvLength = 0;
+//    MsgType typeMsg;
+//    QByteArray userInfo, chunk, imageData;
+//    in>>blockIndex>>typeMsg>>totalSize>>chunkLength>>userInfo>>chunk;
+//    if(blockIndex == 1 && imageData.isEmpty()==true)
+//    {
+//        imageData.append(chunk);
+//        recvLength += chunkLength;
+//    }
+//    else if(blockIndex > 1)
+//    {
+//        imageData.append(chunk);
+//        recvLength += chunkLength;
+//    }
+//    else if(blockIndex == 1 && imageData.isEmpty()!= true)
+//    {
+//        QString imageBase64 = imageData.toBase64();
+//        imageData.clear();
+//        chunkLength = 0;
+//        /*显示实现*/
+//    }
+//    qDebug()<<blockIndex<<recvLength;
 }
 
 void Widget::on_closeButton_clicked()
@@ -151,9 +197,9 @@ void Widget::on_closeButton_clicked()
     this->close();
 }
 
-QImage base64ToImage(QString base64Str)
-{
-    QImage image;
-    image.loadFromData(QByteArray::fromBase64(base64Str.toLocal8Bit()));
-    return image;
-}
+//QImage base64ToImage(QString base64Str)
+//{
+//    QImage image;
+//    image.loadFromData(QByteArray::fromBase64(base64Str.toLocal8Bit()));
+//    return image;
+//}

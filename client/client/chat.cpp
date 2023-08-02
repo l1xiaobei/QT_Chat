@@ -70,7 +70,6 @@ void chat::on_imageButton_clicked()
         qDebug()<<imgBase64 ;
         QString htmlPath = "<img src=\"data:image/png;base64," + imgBase64 + "width=\"220\" height=\"96\"" "\">";
         ui->chatText->insertHtml(htmlPath);
-
         /*发送实现*/
         int totalSize = imgBy.size();
         qDebug() << totalSize;
@@ -79,18 +78,24 @@ void chat::on_imageButton_clicked()
         userInfo.append(timeStr + "  " + ui->nameLine->text() + ": " + "\n" + ui->sendLine->text());//发送用户的信息
         const int CHUNK_SIZE = 1024;    //每帧发送的字节大小
         qDebug()<<userInfo;
-        QByteArray chunk;
-        int chunkSize, remainingSize;
+        int chunkSize, remainingSize,blockIndex=1;
         while(sendSize < totalSize)
         {
             remainingSize = totalSize - sendSize;
             chunkSize = qMin(remainingSize, CHUNK_SIZE); //每帧发送的字节大小,如果不够1024，剩多少发多少
-            chunk = imgBy.left(chunkSize);  //从原始数据中提取一个块
-            out<<typeMsg<<totalSize<<chunk.length()<<userInfo<<chunk;      //将消息全部封装进infoBlock
+            //chunk = imgBy.left(chunkSize);  //从原始数据中提取一个块 //不对！这样提取没把原来的删掉，所以每次提取的数据都是一样的
+            QByteArray chunk = imgBy.mid(sendSize, chunkSize);//这样从原始数据中提取块就合理了
+            out<<blockIndex<<typeMsg<<totalSize<<chunk.length()<<userInfo<<chunk;      //将消息全部封装进infoBlock
             socket->write(infoBlock);            //发送块数据
+            QThread::usleep(3);
             sendSize += chunkSize;                           //更新已发送数据的大小
+
+            //qDebug()<<sendSize<<"|||"<<remainingSize<<"||| chunkLength"<<chunk.length();
+            qDebug()<<blockIndex<<"|||"<<typeMsg<<totalSize<<chunk.length()<<userInfo<<"~~~"<<endl;
+            blockIndex+=1;//包索引
             //qDebug() << sendSize << "--->" << double(100.0*sendSize/totalSize) << "%";
         }
+//        qDebug()<<"---------------------------------------"<<endl<<imgBy;
     }
 }
 

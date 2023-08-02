@@ -20,7 +20,7 @@ private slots:
     void run_slots();
 
 signals:
-    void send2Widget(QByteArray ba);
+    void send2Widget(QTcpSocket *socket);
 
 };
 

@@ -25,7 +25,7 @@ public:
 private slots:
     void on_closeButton_clicked();
     void connect_slot();
-    void send_slot(QByteArray ba);
+    void send_slot(QTcpSocket *socket);
 
 private:
     Ui::Widget *ui;
