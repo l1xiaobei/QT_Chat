@@ -112,11 +112,12 @@ void Widget::send_slot(QTcpSocket *socket)
             recvSize = 0;
             qint64 fileSize_ = fileSize;
             fileSize = 0;
-            file.close();
+
 
             //图片显示
             QImage *img = new QImage;
             img->load("/recvImg.jpg");
+            file.close();
             QByteArray imgBy;
             QBuffer imgBuf(&imgBy);
             img->save(&imgBuf, "jpeg");//将图片数据写入到imgBy字节数组中
@@ -126,42 +127,42 @@ void Widget::send_slot(QTcpSocket *socket)
 
             //图片向客户端转发：
             //向每一个客户端转发服务器收到的图片消息，先发文件头
-//            qDebug() << "zhuan发了吗" << endl ;
-//            for(int i=0; i<clientList.count(); i++)
-//            {
-//                file.open(QIODevice::ReadOnly);
-//                qint64 len = clientList.at(i)->write(fileHead.toUtf8().data());
-//                clientList.at(i)->waitForBytesWritten();	//等待数据发送完毕
-//qDebug() << fileHead<<len<<"ruzhuan" << endl ;
-//                if(len > 0)
-//                {
-//                    qint64 chunkSize = 0;
-//                    qint64 sendSize = 0;
-//                    do{
+            qDebug() << "zhuan发了吗" << endl ;
+            for(int i=0; i<clientList.count(); i++)
+            {
+                file.open(QIODevice::ReadOnly);
+                qint64 len = clientList.at(i)->write(fileHead.toUtf8().data());
+                clientList.at(i)->waitForBytesWritten();	//等待数据发送完毕
+qDebug() << fileHead<<len<<"ruzhuan" << endl ;
+                if(len > 0)
+                {
+                    qint64 chunkSize = 0;
+                    qint64 sendSize = 0;
+                    do{
 
-//                    //每次发送4kb大小的数据，如果剩余的数据不足4kb，就全部发过去
-//                        char buf[4*1024] = {0};
+                    //每次发送4kb大小的数据，如果剩余的数据不足4kb，就全部发过去
+                        char buf[4*1024] = {0};
 
-//                        chunkSize = 0;
-//                        qDebug() << "发了吗" << endl ;
-//                        chunkSize = file.read(buf, sizeof(buf)); //读数据
-//                        chunkSize = socket->write(buf, chunkSize); //发数据
-//                        qDebug() << "如发:"<< endl << "CHUNK_SIZE:"<<chunkSize <<"SEND_SIZE:"<< sendSize;
-//                        sendSize += chunkSize; //更新已发送的文件大小
-//                    }while(chunkSize > 0);
+                        chunkSize = 0;
+                        qDebug() << "发了吗" << endl ;
+                        chunkSize = file.read(buf, sizeof(buf)); //读数据
+                        chunkSize = socket->write(buf, chunkSize); //发数据
+                        qDebug() << "如发:"<< endl << "CHUNK_SIZE:"<<chunkSize <<"SEND_SIZE:"<< sendSize;
+                        sendSize += chunkSize; //更新已发送的文件大小
+                    }while(chunkSize > 0);
 
-//                    if(sendSize == fileSize_)
-//                    {
-//                       qDebug() << "send success!@!";
-//                       file.close();
-//                    }
+                    if(sendSize == fileSize_)
+                    {
+                       qDebug() << "send success!@!";
+                       file.close();
+                    }
 
-//                    else
-//                        qDebug() << "文件打开失败";
-//                }
+                    else
+                        qDebug() << "文件打开失败";
+                }
 
 
-//            }
+            }
         }
     }
 

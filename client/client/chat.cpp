@@ -67,58 +67,58 @@ void chat::server_slot()
         ui->chatText->append(text);
     }
 
-//    //==================处理图片信息==================//
-//    if(isFile == false && ba.isEmpty() != true && flag == "image" && recvSize == 0 )//第一次接收，因此是文件头
-//    {
-//        isFile = true;
-//        qDebug() << "test2";
-//        //获取文件信息
-//        QString fileName = QString(ba).section("#", 2, 2);
-//        qDebug() << "ba:" << ba << endl;
+    //==================处理图片信息==================//
+    if(isFile == false && ba.isEmpty() != true && flag == "image" && recvSize == 0 )//第一次接收，因此是文件头
+    {
+        isFile = true;
+        qDebug() << "test2";
+        //获取文件信息
+        QString fileName = QString(ba).section("#", 2, 2);
+        qDebug() << "ba:" << ba << endl;
 
-//        fileSize = QString(ba).section("#", 3, 3).toInt();
-//        qDebug() << fileName << fileSize;
+        fileSize = QString(ba).section("#", 3, 3).toInt();
+        qDebug() << fileName << fileSize;
 
 
-//        client_recv_file.setFileName("/recvImg.jpg");
+        client_recv_file.setFileName("/recvImg.jpg");
 
-//        if(false == client_recv_file.open(QIODevice::WriteOnly))//如果没能在这个地址成功写入文件，则报错
-//        {
-//            fileName = "";
-//            fileSize = 0;
-//            recvSize = 0;
-//            isFile = false;
-//            QMessageBox::warning(this, "警告", "创建文件失败");
-//            return;
-//        }
+        if(false == client_recv_file.open(QIODevice::WriteOnly))//如果没能在这个地址成功写入文件，则报错
+        {
+            fileName = "";
+            fileSize = 0;
+            recvSize = 0;
+            isFile = false;
+            QMessageBox::warning(this, "警告", "创建文件失败");
+            return;
+        }
 
-//        qDebug() << "正在接收文件---->" << fileName << endl << isFile;
-//        return;//return防止程序继续顺次执行下去，把文件头当成图片数据了
-//    }
-//    if(isFile == true && ba.isEmpty() != true)//说明是图片的文件数据
-//    {
-//        qint64 len = client_recv_file.write(ba);
-//        recvSize += len ;
-//        qDebug() << "len:"<<len<<"   recvSize:"<<recvSize<<"   fileSize:"<<fileSize<<endl<<"进度：" << recvSize*100/fileSize <<"%" <<endl;
-//        if(recvSize == fileSize)
-//        {
-//            qDebug() <<"接收完毕"<< recvSize ;
-//            //收尾工作
-//            isFile = false;
-//            recvSize = 0;
-//            fileSize = 0;
+        qDebug() << "正在接收文件---->" << fileName << endl << isFile;
+        return;//return防止程序继续顺次执行下去，把文件头当成图片数据了
+    }
+    if(isFile == true && ba.isEmpty() != true)//说明是图片的文件数据
+    {
+        qint64 len = client_recv_file.write(ba);
+        recvSize += len ;
+        qDebug() << "len:"<<len<<"   recvSize:"<<recvSize<<"   fileSize:"<<fileSize<<endl<<"进度：" << recvSize*100/fileSize <<"%" <<endl;
+        if(recvSize == fileSize)
+        {
+            qDebug() <<"接收完毕"<< recvSize ;
+            //收尾工作
+            isFile = false;
+            recvSize = 0;
+            fileSize = 0;
 
-//            //图片显示
-//            QImage *img = new QImage;
-//            img->load("/recvImg.jpg");
-//            QByteArray imgBy;
-//            QBuffer imgBuf(&imgBy);
-//            img->save(&imgBuf, "jpeg");//将图片数据写入到imgBy字节数组中
-//            QString imgBase64 = imgBy.toBase64();
-//            QString htmlPath = "<img src=\"data:image/png;base64," + imgBase64 + "width=\"220\" height=\"96\"" "\">";
-//            ui->chatText->insertHtml(htmlPath);
-//        }
-    //}
+            //图片显示
+            QImage *img = new QImage;
+            img->load("/recvImg.jpg");
+            QByteArray imgBy;
+            QBuffer imgBuf(&imgBy);
+            img->save(&imgBuf, "jpeg");//将图片数据写入到imgBy字节数组中
+            QString imgBase64 = imgBy.toBase64();
+            QString htmlPath = "<img src=\"data:image/png;base64," + imgBase64 + "width=\"220\" height=\"96\"" "\">";
+            ui->chatText->insertHtml(htmlPath);
+        }
+    }
 }
 
 void chat::on_imageButton_clicked()
