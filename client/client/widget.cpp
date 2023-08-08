@@ -26,11 +26,11 @@ void Widget::on_loginButton_clicked()
        QMessageBox::information(this, "连接状态", "连接成功");
 
        //向服务器打印一条加入信息
-       QByteArray ba;
+       QByteArray ba = "head#text#";
        QDateTime dateTime= QDateTime::currentDateTime();//获取系统当前的时间
        QString timeStr = dateTime.toString("yyyy-MM-dd hh:mm:ss");//格式化时间
        ba.append("[" + name + "] " + "has joined the terrorist force");
-       socket->write(ba);
+       socket->write(ba);       
 
        this->hide();
 

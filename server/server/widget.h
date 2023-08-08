@@ -30,6 +30,11 @@ private slots:
 private:
     Ui::Widget *ui;
     QTcpServer *server;
+    bool isFile = false;
+    QFile file;
+    qint64 recvSize = 0;
+    qint64 fileSize = 0;
+    QString fileHead;
 
     QList <QTcpSocket*> clientList; //连接到服务器的客户端列表
 };

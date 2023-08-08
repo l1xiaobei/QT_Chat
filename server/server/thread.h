@@ -6,6 +6,9 @@
 #include <QTcpSocket>
 #include <QImage>
 #include <QLabel>
+#include <QFile>
+#include <QMessageBox>
+#include <QBuffer>
 
 class thread : public QThread
 {
