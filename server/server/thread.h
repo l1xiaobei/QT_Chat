@@ -9,6 +9,7 @@
 #include <QFile>
 #include <QMessageBox>
 #include <QBuffer>
+#include <QDir>
 
 class thread : public QThread
 {

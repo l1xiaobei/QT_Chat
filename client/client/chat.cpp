@@ -50,7 +50,7 @@ void chat::on_sendButton_clicked()
     QByteArray ba = "head#text#";
     QDateTime dateTime= QDateTime::currentDateTime();//获取系统当前的时间
     QString timeStr = dateTime.toString("yyyy-MM-dd hh:mm:ss");//格式化时间
-    ba.append(timeStr + "  " + ui->nameLine->text() + ": " + "\n" );
+    ba.append(timeStr + "  " + ui->nameLine->text() + ": " + "\n" + ui->sendLine->text());
     socket->write(ba);        //write()需要提供bytearray型的参数，所以要把qstring转换一下
     ui->sendLine->clear();
 }
@@ -70,6 +70,23 @@ void chat::server_slot()
     //==================处理图片信息==================//
     if(isFile == false && ba.isEmpty() != true && flag == "image" && recvSize == 0 )//第一次接收，因此是文件头
     {
+
+        //设置图片存放路径
+        QString currentPath = QCoreApplication::applicationDirPath();//获取当前程序运行目录
+        QString folderName = "client_images";
+        QDir dir(currentPath);
+        if (!dir.exists(folderName)) {
+            if (dir.mkdir(folderName)) {
+                qDebug() << "Folder created successfully.";
+            } else {
+                qDebug() << "Folder creation failed.";
+            }
+        } else {
+            qDebug() << "Folder already exists.";
+        }
+        QString folderPath = QDir(currentPath).filePath(folderName);//完整文件夹路径
+
+
         isFile = true;
         qDebug() << "test2";
         //获取文件信息
@@ -80,7 +97,7 @@ void chat::server_slot()
         qDebug() << fileName << fileSize;
 
 
-        client_recv_file.setFileName("/recvImg.jpg");
+        client_recv_file.setFileName(folderPath + QDir::separator() + "client_recv_image.jpg");
 
         if(false == client_recv_file.open(QIODevice::WriteOnly))//如果没能在这个地址成功写入文件，则报错
         {
@@ -110,7 +127,13 @@ void chat::server_slot()
 
             //图片显示
             QImage *img = new QImage;
-            img->load("/recvImg.jpg");
+
+            QString currentPath = QCoreApplication::applicationDirPath();//获取当前程序运行目录
+            QString folderName = "client_images";
+            QDir dir(currentPath);
+            QString folderPath = QDir(currentPath).filePath(folderName);//完整文件夹路径
+
+            img->load(folderPath + QDir::separator() + "client_recv_image.jpg");
             QByteArray imgBy;
             QBuffer imgBuf(&imgBy);
             img->save(&imgBuf, "jpeg");//将图片数据写入到imgBy字节数组中
