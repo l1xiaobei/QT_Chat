@@ -1,13 +1,6 @@
 #include "widget.h"
 #include "ui_widget.h"
 
-//定义一个枚举消息类型用于区分发送的是图片还是消息
-enum MsgType
-{
-    textMsg,
-    imageMsg,
-};
-
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
@@ -36,17 +29,28 @@ void Widget::connect_slot()
     t->start();         //开始线程
 
     connect(t, &thread::send2Widget, this, &Widget::send_slot);
-}
 
+    //显示连接到服务器的客户端
+    ui->clientText->clear();
+    for(int i=0; i<clientList.count(); i++)
+    {
+        if (clientList.at(i)->state() == QAbstractSocket::ConnectedState)
+        {
+            ui->clientText->append(QString("|--client%1 ip:%2 port:%3").arg(i+1).arg(clientList.at(i)
+                                                                                     ->peerAddress().toString()).arg(clientList.at(i)->peerPort()));
+        }
+
+    }
+}
 
 void Widget::send_slot(QTcpSocket *socket)
 {
+
     QByteArray ba = socket->readAll();
-    qDebug() << "test1";
-    qDebug()<<isFile<<ba.isEmpty()<<recvSize;
     QString flag = QString(ba).section("#", 1, 1);
 
     if(QString(ba).section("#", 1, 1) == "image"){fileHead = QString(ba);}
+
     //==================处理文本信息==================//
     if(flag == "text")
     {
@@ -59,6 +63,7 @@ void Widget::send_slot(QTcpSocket *socket)
             clientList.at(i)->write(ba);
         }
     }
+
     //==================处理图片信息==================//
     if(isFile == false && ba.isEmpty() != true && flag == "image" && recvSize == 0 )//第一次接收，因此是文件头
     {
@@ -157,7 +162,6 @@ void Widget::send_slot(QTcpSocket *socket)
                 file.open(QIODevice::ReadOnly);
                 qint64 len = clientList.at(i)->write(fileHead.toUtf8().data());
                 clientList.at(i)->waitForBytesWritten();	//等待数据发送完毕
-qDebug() << fileHead<<len<<"ruzhuan" << endl ;
                 if(len > 0)
                 {
                     qint64 chunkSize = 0;
@@ -191,168 +195,8 @@ qDebug() << fileHead<<len<<"ruzhuan" << endl ;
     }
 
 }
-//void Widget::send_slot(QByteArray ba)//不在这里传参了
-//void Widget::send_slot(QTcpSocket *socket)
-//{
-////        ui->textEdit->append(QString(ba));
-
-////        //向每一个客户端转发服务器收到的消息
-////        for(int i=0; i<clientList.count(); i++)
-////        {
-////            clientList.at(i)->write(ba);
-////        }
-/////////////////////////////////////////////
-////    QDataStream in(&ba, QIODevice::ReadOnly);
-////    in.setVersion(QDataStream::Qt_5_12);       //设置QDataStream版本
-////    int typeMsg;
-////    QString msgInfo;
-////    QByteArray msgData;
-////    in>>typeMsg>>msgInfo>>msgData;
-////    QString msgData_ = msgData.toBase64();
-////    qDebug() << "接收到的数据大小：" << msgData.size();
-////    qDebug() << "消息信息：" << msgInfo;
-////    if(typeMsg == MsgType::imageMsg)
-////    {
-////        ui->textEdit->append(msgInfo);
-////        QString htmlPath = "<img src=\"data:image/png;base64," + msgData_ + "width=\"220\" height=\"96\"" "\">";
-////        ui->textEdit->insertHtml(htmlPath);
-////    }
-////    const int CHUNK_SIZE = 1024;
-////    QMap<int, QByteArray> dataMap;
-////    QByteArray receivedData;
-////    while (1)
-////    {
-////        // 将新接收的数据添加到已接收数据的末尾
-////        receivedData.append(ba);
-
-////        // 检查是否接收到了完整的数据块
-////        while (receivedData.size() >= sizeof(int) + CHUNK_SIZE) {
-////        // 提取序列号和数据块
-////        int sequenceNumber = 0;
-////        memcpy(&sequenceNumber, receivedData.constData(), sizeof(int));
-////        QByteArray chunk = receivedData.mid(sizeof(int), CHUNK_SIZE);
-
-////        // 将数据块存储到映射表中
-////        dataMap[sequenceNumber] = chunk;
-
-////        // 从已接收数据中移除已处理的序列号和数据块
-////        receivedData.remove(0, sizeof(int) + CHUNK_SIZE);
-////        }
-
-////        // 组装完整的数据
-////        int nextSequenceNumber = 0;
-////        while (dataMap.contains(nextSequenceNumber)) {
-
-////        QByteArray ba_ = dataMap[nextSequenceNumber];
-////        QDataStream in(ba);
-////        in.setVersion(QDataStream::Qt_5_12);       //设置QDataStream版本
-////        int typeMsg;
-////        QString msgInfo;
-////        QByteArray msgData;
-////        in>>typeMsg>>msgInfo>>msgData;
-////        QString msgData_ = msgData.toBase64();
-////        qDebug() << "接收到的数据大小：" << msgData.size();
-////        qDebug() << "消息信息：" << msgInfo;
-////        if(typeMsg == MsgType::imageMsg)
-////        {
-////            ui->textEdit->append(msgInfo);
-////            QString htmlPath = "<img src=\"data:image/png;base64," + msgData_ + "width=\"220\" height=\"96\"" "\">";
-////            ui->textEdit->insertHtml(htmlPath);
-////        }
-////        dataMap.remove(nextSequenceNumber);
-////        nextSequenceNumber++;
-////        }
-////    }
-////////////////////////////////////////////////////
-////    QDataStream in(&ba, QIODevice::ReadOnly);
-////    MsgType typeMsg;
-////    int totalSize, chunkLength, blockIndex=0,localIndex=1;
-////    QByteArray userInfo;
-////    QByteArray chunk;
-////    QByteArray imageData;
-////    in>>blockIndex>>typeMsg>>totalSize>>chunkLength>>userInfo>>chunk;
-////    if(typeMsg == MsgType::imageMsg)
-////    {
-////        qDebug()<<localIndex<<"|||"<<blockIndex<<chunkLength<<"total:"<<totalSize;
-////        blockIndex+=1;localIndex+=1;
-////        int receiveLength = chunkLength;
-////        imageData.append(chunk);
-//////      while(receiveLength<totalSize&&typeMsg==MsgType::imageMsg)//也许并不需要循环
-////        {
-////                if(localIndex == blockIndex)
-////                {
-////                    MsgType typeMsg_;
-////                    QByteArray userInfo_;
-////                    int chunkLength_, totalSize_;
-////                    QByteArray imageData_;
-////                    QByteArray chunk_;//其实这些没必要保持一直，可以加个后缀tmp
-////                    in>>blockIndex>>typeMsg_>>totalSize_>>chunkLength_>>userInfo_>>chunk_;    // 等待足够的数据到达
-////                    receiveLength += chunkLength_;
-////                    imageData.append(chunk_);
-////                    qDebug()<<localIndex<<blockIndex<<chunkLength<<"total:"<<totalSize<<"recv:"<<receiveLength;
-////                    localIndex+=1;
-////                }
-////        }
-////        ui->textEdit->append(userInfo);
-////        //qDebug() << userInfo;
-////        QString imageBase64 = imageData.toBase64();
-////        ui->textEdit->setText(imageBase64);
-////    }
-////    //qDebug()<<imageBase64;
-//////    qDebug()<<receiveLength;
-//////    QImage base64ToImage(QString base64Str);//函数原型声明
-//////    QImage image = base64ToImage(imageBase64);
-//////    QPixmap pixmap = QPixmap::fromImage(image);
-//////    ui->label_2->setPixmap(pixmap);
-//////    imageData.clear();
-///////////////////////////////////////
-////    QDataStream in(&ba, QIODevice::ReadOnly);
-////    int blockIndex = 0, totalSize, chunkLength, recvLength = 0;
-////    MsgType typeMsg;
-////    QByteArray chunk, imageData, userInfo;
-////    int localIndex = 0;
-////    if (localIndex == blockIndex)
-////    {
-////        in>>blockIndex>>typeMsg>>totalSize>>chunkLength>>userInfo>>chunk;
-////        recvLength += chunkLength;
-////        imageData.append(chunk);
-////        localIndex += 1;
-////        qDebug()<<localIndex<<blockIndex<<chunkLength<<"total:"<<totalSize<<"recv:"<<recvLength;
-////    }
-////    QDataStream in(socket);
-////    int blockIndex, totalSize, chunkLength;
-////    int recvLength = 0;
-////    MsgType typeMsg;
-////    QByteArray userInfo, chunk, imageData;
-////    in>>blockIndex>>typeMsg>>totalSize>>chunkLength>>userInfo>>chunk;
-////    if(blockIndex == 1 && imageData.isEmpty()==true)
-////    {
-////        imageData.append(chunk);
-////        recvLength += chunkLength;
-////    }
-////    else if(blockIndex > 1)
-////    {
-////        imageData.append(chunk);
-////        recvLength += chunkLength;
-////    }
-////    else if(blockIndex == 1 && imageData.isEmpty()!= true)
-////    {
-////        QString imageBase64 = imageData.toBase64();
-////        imageData.clear();
-////        chunkLength = 0;
-////        /*显示实现*/
-////    }
-////    qDebug()<<blockIndex<<recvLength;
-//}
 
 void Widget::on_closeButton_clicked()
 {
     this->close();
 }
-
-//QImage base64ToImage(QString base64Str)
-//{
-//    QImage image;
-//    image.loadFromData(QByteArray::fromBase64(base64Str.toLocal8Bit()));
-//    return image;
-//}
