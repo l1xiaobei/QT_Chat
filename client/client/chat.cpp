@@ -3,13 +3,6 @@
 
 QString fileName_global;
 
-//定义一个枚举消息类型用于区分发送的是图片还是消息
-enum MsgType
-{
-    textMsg,
-    imageMsg,
-};
-
 chat::chat(QTcpSocket *s,QString name, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::chat)

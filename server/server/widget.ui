@@ -14,34 +14,10 @@
    <string>Widget</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="3">
-    <widget class="QLabel" name="portLabel">
-     <property name="text">
-      <string>port:</string>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="0">
     <widget class="QLabel" name="output">
      <property name="text">
       <string>output:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="4">
-    <widget class="QLineEdit" name="portLine"/>
-   </item>
-   <item row="1" column="3">
-    <widget class="QLabel" name="clientLabel">
-     <property name="text">
-      <string>已监听客户端列表：</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QLabel" name="ipLabel">
-     <property name="text">
-      <string>ip address:</string>
      </property>
     </widget>
    </item>
@@ -52,14 +28,18 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="2">
-    <widget class="QLineEdit" name="ipLine"/>
-   </item>
-   <item row="2" column="3" colspan="2">
+   <item row="2" column="2" colspan="2">
     <widget class="QTextEdit" name="clientText"/>
    </item>
-   <item row="2" column="0" colspan="3">
+   <item row="2" column="0" colspan="2">
     <widget class="QTextEdit" name="textEdit"/>
+   </item>
+   <item row="1" column="2">
+    <widget class="QLabel" name="clientLabel">
+     <property name="text">
+      <string>已监听客户端列表：</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

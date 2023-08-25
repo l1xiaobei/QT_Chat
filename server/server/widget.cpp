@@ -22,9 +22,6 @@ void Widget::connect_slot()
 
     clientList.append(socket);  //将连接到的客户端套接字存起来////////////////////////
 
-    ui->ipLine->setText(socket->peerAddress().toString());          //获取客户端的ip，并显示
-    ui->portLine->setText(QString::number(socket->peerPort()));     //获取客户端的端口号（不等于服务器的端口），并显示
-
     class thread *t = new class thread(socket);     //创建线程对象
     t->start();         //开始线程
 
