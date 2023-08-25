@@ -37,6 +37,8 @@ private slots:
 
     void sendImage_slot();
 
+    void on_changeButton_clicked();
+
 private:
     Ui::chat *ui;
     QTcpSocket *socket;

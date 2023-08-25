@@ -2,6 +2,7 @@
 #include "ui_chat.h"
 
 QString fileName_global;
+QString name_global;
 
 chat::chat(QTcpSocket *s,QString name, QWidget *parent) :
     QWidget(parent),
@@ -21,10 +22,11 @@ chat::chat(QTcpSocket *s,QString name, QWidget *parent) :
         });
 
     ui->nameLine->setText(name);
+    name_global = name;
+    ui->targetLine->setText("所有人");
 
     //接受服务器发送回的消息
     connect(socket, &QTcpSocket::readyRead, this, &chat::server_slot);
-
 
 }
 
@@ -41,9 +43,10 @@ void chat::on_deleteButton_clicked()
 void chat::on_sendButton_clicked()
 {
     QByteArray ba = "head#text#";
-    QDateTime dateTime= QDateTime::currentDateTime();//获取系统当前的时间
-    QString timeStr = dateTime.toString("yyyy-MM-dd hh:mm:ss");//格式化时间
-    ba.append(timeStr + "  " + ui->nameLine->text() + ": " + "\n" + ui->sendLine->text());
+//    QDateTime dateTime= QDateTime::currentDateTime();//获取系统当前的时间
+//    QString timeStr = dateTime.toString("yyyy-MM-dd hh:mm:ss");//格式化时间
+//    ba.append(timeStr + "\n" + name_global + "对" +ui->targetLine->text() + "说" + ":  "+ ui->sendLine->text());
+    ba.append(name_global + "对" +ui->targetLine->text() + "说" + ":  "+ ui->sendLine->text());
     socket->write(ba);        //write()需要提供bytearray型的参数，所以要把qstring转换一下
     ui->sendLine->clear();
 }
@@ -150,10 +153,12 @@ void chat::on_imageButton_clicked()
         qint64 fileSize = file.size();
         qDebug() << "fileSize" << fileSize;
 
-        QDateTime dateTime= QDateTime::currentDateTime();//获取系统当前的时间//这个时间差不多是接收到的时间而不是发送的时间
-        QString timeStr = dateTime.toString("yyyy-MM-dd hh:mm:ss");//格式化时间
+//        QDateTime dateTime= QDateTime::currentDateTime();//获取系统当前的时间//这个时间差不多是接收到的时间而不是发送的时间
+//        QString timeStr = dateTime.toString("yyyy-MM-dd hh:mm:ss");//格式化时间
+//        QString userInfo;
+//        userInfo.append(timeStr + "  " + ui->nameLine->text() + ": " + "\n" + ui->sendLine->text());//发送用户的信息
         QString userInfo;
-        userInfo.append(timeStr + "  " + ui->nameLine->text() + ": " + "\n" + ui->sendLine->text());//发送用户的信息
+        userInfo.append(name_global + "对" + ui->targetLine->text() + "发送了图片:  " + "\n");
 
         //自定义文件头   head#图片#文件名#文件大小 （%1 %2 都是占位符）
         QString imgFlag = "image";
@@ -215,3 +220,16 @@ void chat::sendImage_slot()
 }
 
 
+
+void chat::on_changeButton_clicked()
+{
+    //如果改用户名 发送一条提示消息
+    if(ui->nameLine->text() != name_global)
+     {
+        QByteArray ba = "head#text#";
+        ba.append(name_global + "将用户名改为了" + ui->nameLine->text() + "!");
+        name_global = ui->nameLine->text();
+        socket->write(ba);
+     }
+
+}
