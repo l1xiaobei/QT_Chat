@@ -48,6 +48,7 @@ private:
     qint64 recvSize = 0;
     qint64 fileSize = 0;
     QFile client_recv_file;
+    QFile txt_file;
 };
 
 #endif // CHAT_H

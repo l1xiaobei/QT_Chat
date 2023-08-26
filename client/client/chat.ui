@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,0,0,0,0,0,0,0,0">
+  <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,0,0,0,0,0,0,0">
    <property name="sizeConstraint">
     <enum>QLayout::SetDefaultConstraint</enum>
    </property>
@@ -26,33 +26,19 @@
    <property name="horizontalSpacing">
     <number>5</number>
    </property>
-   <item row="4" column="0">
-    <widget class="QLabel" name="targetLabel">
-     <property name="text">
-      <string>喊话对象</string>
-     </property>
-    </widget>
-   </item>
    <item row="3" column="2">
     <widget class="QLineEdit" name="nameLine"/>
-   </item>
-   <item row="4" column="2">
-    <widget class="QLineEdit" name="targetLine"/>
-   </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="nameLabel">
-     <property name="text">
-      <string>当前聊天室马甲</string>
-     </property>
-    </widget>
    </item>
    <item row="6" column="2">
     <widget class="QLineEdit" name="sendLine"/>
    </item>
-   <item row="6" column="0">
-    <widget class="QLabel" name="label">
+   <item row="1" column="0" colspan="8">
+    <widget class="QTextEdit" name="chatText"/>
+   </item>
+   <item row="6" column="7">
+    <widget class="QPushButton" name="imageButton">
      <property name="text">
-      <string>信息</string>
+      <string>选择图片</string>
      </property>
     </widget>
    </item>
@@ -63,13 +49,10 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="8">
-    <widget class="QTextEdit" name="chatText"/>
-   </item>
-   <item row="6" column="6">
-    <widget class="QPushButton" name="imageButton">
+   <item row="6" column="0">
+    <widget class="QLabel" name="label">
      <property name="text">
-      <string>选择图片</string>
+      <string>信息</string>
      </property>
     </widget>
    </item>
@@ -77,6 +60,23 @@
     <widget class="QPushButton" name="changeButton">
      <property name="text">
       <string>改名</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="targetLabel">
+     <property name="text">
+      <string>喊话对象</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2">
+    <widget class="QLineEdit" name="targetLine"/>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="nameLabel">
+     <property name="text">
+      <string>当前聊天室马甲</string>
      </property>
     </widget>
    </item>

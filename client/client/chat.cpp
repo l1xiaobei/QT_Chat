@@ -3,6 +3,7 @@
 
 QString fileName_global;
 QString name_global;
+int file_Counter = 1;
 
 chat::chat(QTcpSocket *s,QString name, QWidget *parent) :
     QWidget(parent),
@@ -24,6 +25,22 @@ chat::chat(QTcpSocket *s,QString name, QWidget *parent) :
     ui->nameLine->setText(name);
     name_global = name;
     ui->targetLine->setText("所有人");
+
+    //保存文字聊天记录
+    QString currentPath = QCoreApplication::applicationDirPath();//获取当前程序运行目录
+    QString folderName = "chat_log";
+    QDir dir(currentPath);
+    if (!dir.exists(folderName)) {
+        if (dir.mkdir(folderName)) {
+            qDebug() << "Folder created successfully.";
+        } else {
+            qDebug() << "Folder creation failed.";
+        }
+    } else {
+        qDebug() << "Folder already exists.";
+    }
+    QString folderPath = QDir(currentPath).filePath(folderName);//完整文件夹路径
+    txt_file.setFileName(folderPath + QDir::separator() + "chat_log.txt");
 
     //接受服务器发送回的消息
     connect(socket, &QTcpSocket::readyRead, this, &chat::server_slot);
@@ -61,6 +78,20 @@ void chat::server_slot()
     {
         QString text = QString(ba).section("#", 2, 2);
         ui->chatText->append(text);
+
+        //保存文字聊天记录
+        if(false == txt_file.open(QIODevice::WriteOnly))//如果没能在这个地址成功写入文件，则报错
+        {
+            QMessageBox::warning(this, "警告", "创建文件失败");
+            return;
+        }
+        else
+        {
+            QTextStream txtStream(&txt_file);
+            txtStream << text << endl;
+            txt_file.close();
+        }
+
     }
 
     //==================处理图片信息==================//
@@ -93,7 +124,8 @@ void chat::server_slot()
         qDebug() << fileName << fileSize;
 
 
-        client_recv_file.setFileName(folderPath + QDir::separator() + "client_recv_image.jpg");
+        client_recv_file.setFileName(folderPath + QDir::separator() + "client_recv_image_" + file_Counter + ".jpg");
+        file_Counter++;
 
         if(false == client_recv_file.open(QIODevice::WriteOnly))//如果没能在这个地址成功写入文件，则报错
         {
