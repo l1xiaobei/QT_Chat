@@ -40,7 +40,9 @@ chat::chat(QTcpSocket *s,QString name, QWidget *parent) :
         qDebug() << "Folder already exists.";
     }
     QString folderPath = QDir(currentPath).filePath(folderName);//完整文件夹路径
-    txt_file.setFileName(folderPath + QDir::separator() + "chat_log.txt");
+    QDateTime dateTime= QDateTime::currentDateTime();//获取系统当前的时间
+    QString timeStr = dateTime.toString("yyyy_MM_dd_hh_mm_ss");//格式化时间
+    txt_file.setFileName(folderPath + QDir::separator() + "chat_log_" + timeStr + ".txt");
 
     //接受服务器发送回的消息
     connect(socket, &QTcpSocket::readyRead, this, &chat::server_slot);
@@ -80,7 +82,7 @@ void chat::server_slot()
         ui->chatText->append(text);
 
         //保存文字聊天记录
-        if(false == txt_file.open(QIODevice::WriteOnly))//如果没能在这个地址成功写入文件，则报错
+        if(false == txt_file.open(QIODevice::Append))//如果没能在这个地址成功写入文件，则报错
         {
             QMessageBox::warning(this, "警告", "创建文件失败");
             return;
@@ -124,7 +126,7 @@ void chat::server_slot()
         qDebug() << fileName << fileSize;
 
 
-        client_recv_file.setFileName(folderPath + QDir::separator() + "client_recv_image_" + file_Counter + ".jpg");
+        client_recv_file.setFileName(folderPath + QDir::separator() + "client_recv_image_" + QString::number(file_Counter) + ".jpg");
         file_Counter++;
 
         if(false == client_recv_file.open(QIODevice::WriteOnly))//如果没能在这个地址成功写入文件，则报错
