@@ -163,7 +163,7 @@ void chat::server_slot()
             QDir dir(currentPath);
             QString folderPath = QDir(currentPath).filePath(folderName);//完整文件夹路径
 
-            img->load(folderPath + QDir::separator() + "client_recv_image.jpg");
+            img->load(folderPath + QDir::separator() + "client_recv_image_" + QString::number(file_Counter-1) + ".jpg");
             QByteArray imgBy;
             QBuffer imgBuf(&imgBy);
             img->save(&imgBuf, "jpeg");//将图片数据写入到imgBy字节数组中

@@ -17,7 +17,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     chat.cpp \
-    just.cpp \
     main.cpp \
     widget.cpp
 
